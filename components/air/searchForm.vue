@@ -167,7 +167,6 @@ export default {
 
     // 提交表单是触发
     handleSubmit() {
-      console.log(this.form)
       const rules = {
         depart: {
           value: this.form.departCity,
