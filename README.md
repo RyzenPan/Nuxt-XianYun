@@ -1,22 +1,19 @@
-# xianyun
+# 仙芸旅游开源Nuxt项目
 
-> My impressive Nuxt.js project
+> 项目基于Nuxt.js技术，为个人练习Nuxt的独立设计项目
 
-## Build Setup
+## 如何使用
 
 ``` bash
-# install dependencies
+# 安装依赖
 $ npm run install
 
-# serve with hot reload at localhost:3000
+# 服务端口为 localhost:3000
 $ npm run dev
 
-# build for production and launch server
+# 打包上线
 $ npm run build
 $ npm run start
 
-# generate static project
-$ npm run generate
-```
 
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+更多新奇项目可以关注我的github帐号
