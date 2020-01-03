@@ -7,14 +7,19 @@
     </el-breadcrumb>
   <!-- 条件筛选及地图显示区域 -->
   <SearchBar />
+  <SearchMap />
+  <!-- 筛选按钮 -->
+  <SearchFilter />
   </div>
 </template>
 
 <script>
 import SearchBar from '@/components/hotel/searchBar'
+import SearchMap from '@/components/hotel/searchMap'
+import SearchFilter from '@/components/hotel/searchFilter'
 export default {
   components:{
-    SearchBar
+    SearchBar,SearchMap,SearchFilter
   },
   data() {
     return {

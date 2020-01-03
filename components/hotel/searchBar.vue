@@ -3,7 +3,7 @@
     <!-- 筛选入住时间 -->
     <el-form class="search-form-content" ref="form">
       <el-row>
-        <el-col :span="6">
+        <el-col :span="5">
           <el-form-item>
             <!-- fetch-suggestions 返回输入建议的方法 -->
             <!-- select 点击选中建议项时触发 -->
@@ -18,7 +18,7 @@
           </el-form-item>
         </el-col>
         <!-- 入住日期选择 -->
-        <el-col :span="9">
+        <el-col :span="8.8" style="padding:0 20px;">
           <el-form-item>
             <el-date-picker
               v-model="value1"
@@ -30,23 +30,23 @@
           </el-form-item>
         </el-col>
         <!-- 入住人选择 -->
-        <el-col :span="6">
+        <el-col :span="5" style="margin-right:20px;">
           <el-form-item>
             <el-popover placement="bottom" width="300" trigger="click">
               <span style="padding-right:58px;">每间:</span>
-              <el-select v-model="value" placeholder="请选择" size="mini" style="width:100px;">
+              <el-select v-model="value" placeholder="成人" size="mini" style="width:100px;">
                 <el-option
-                  v-for="item in options"
+                  v-for="item in adultValue"
                   :key="item.value"
-                  :label="item.label"
+                  :label="item.label+'位成人'"
                   :value="item.value"
                 ></el-option>
               </el-select>
-              <el-select v-model="value" placeholder="请选择" size="mini" style="width:100px;">
+              <el-select v-model="value2" placeholder="儿童" size="mini" style="width:100px;">
                 <el-option
-                  v-for="item in options"
+                  v-for="item in childValue"
                   :key="item.value"
-                  :label="item.label"
+                  :label="item.label+'位儿童'"
                   :value="item.value"
                 ></el-option>
               </el-select>
@@ -63,7 +63,7 @@
         </el-col>
         <!-- 按钮 -->
         <el-col :span="2">
-          <el-button type="primary">主要按钮</el-button>
+          <el-button type="primary">查看价格</el-button>
         </el-col>
       </el-row>
     </el-form>
@@ -80,29 +80,52 @@ export default {
       value1: '',
       destList: [],
       input1: '',
-      options: [
+      adultValue: [
         {
-          value: '选项1',
-          label: '黄金糕'
+          value: '1',
+          label: '1'
         },
         {
-          value: '选项2',
-          label: '双皮奶'
+          value: '2',
+          label: '2'
         },
         {
-          value: '选项3',
-          label: '蚵仔煎'
+          value: '3',
+          label: '3'
         },
         {
-          value: '选项4',
-          label: '龙须面'
+          value: '4',
+          label: '4'
         },
         {
-          value: '选项5',
-          label: '北京烤鸭'
+          value: '5',
+          label: '5'
         }
       ],
-      value: ''
+       childValue: [
+        {
+          value: '1',
+          label: '1'
+        },
+        {
+          value: '2',
+          label: '2'
+        },
+        {
+          value: '3',
+          label: '3'
+        },
+        {
+          value: '4',
+          label: '4'
+        },
+        {
+          value: '5',
+          label: '5'
+        }
+      ],
+      value: '',
+      value2: ''
     }
   },
   methods: {

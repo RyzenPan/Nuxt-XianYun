@@ -167,6 +167,12 @@ export default {
 
     // 提交表单是触发
     handleSubmit() {
+      // 本地存储搜索记录
+      // const airs = JSON.parse(localStorage.getItem('airs')) || []
+      // airs.push(this.form)
+      // localStorage.setItem('airs',JSON.stringify(airs))
+      
+      
       const rules = {
         depart: {
           value: this.form.departCity,
@@ -195,6 +201,9 @@ export default {
         path: '/air/flights',
         query: this.form
       })
+      
+      // 存储记录到store中
+      this.$store.commit('air/setAriHistory',this.form)
     }
   },
   mounted() {}
