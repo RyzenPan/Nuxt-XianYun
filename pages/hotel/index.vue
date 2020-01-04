@@ -7,9 +7,11 @@
     </el-breadcrumb>
   <!-- 条件筛选及地图显示区域 -->
   <SearchBar />
-  <SearchMap />
+  <SearchMap :cityData="city" />
   <!-- 筛选按钮 -->
   <SearchFilter />
+  <!-- 酒店列表 -->
+  <SearchItem :hotelData="hotel" />
   </div>
 </template>
 
@@ -17,26 +19,54 @@
 import SearchBar from '@/components/hotel/searchBar'
 import SearchMap from '@/components/hotel/searchMap'
 import SearchFilter from '@/components/hotel/searchFilter'
+import SearchItem from '@/components/hotel/searchItem'
 export default {
   components:{
-    SearchBar,SearchMap,SearchFilter
+    SearchBar,SearchMap,SearchFilter,SearchItem
   },
   data() {
     return {
-      city: []
+      city: {},
+      hotel:[],
+    // 请求酒店信息条件数据
+      hotelsCondition:{
+        // id:0, //酒店id(酒店详情) 
+        city:74 //城市id
+        // price_in:0, //酒店价格
+        // scenic:0, //景点id
+        // name_contains:'', //名字模糊查询
+        // hotellevel:0,    //酒店星级
+        // hoteltype:0,     //酒店类型
+        // hotelbrand:0,   //酒店品牌
+        // hotelasset:0,   //酒店设施
+        // enterTime:2018-11-11,    // 入店时间
+        // leftTime:2018-11-11,      //离开时间
+        // person:0,     //人数
+        // _sort:'',     //排序
+        // _limit:0,       //条数
+        // _start:0    //开始数据（分页
+      }
     }
   },
-  mounted(){
-    this.$axios({
+  async mounted(){
+    // 请求城市列表信息
+    const {data:res} = await this.$axios({
       url:'/cities',
       params:{
         name: '南京'
       }
-    }).then(res=>{
-      console.log(res);
-      this.city = res.data.data[0]
-      console.log(this.city);
     })
+    this.city = res.data[0]
+      console.log(res);
+
+    // 请求酒店列表信息
+    const { data:res1 } = await this.$axios({
+          url:'/hotels',
+          params:this.hotelsCondition
+      })
+      console.log(res1);
+      this.hotel = res1.data
+    
   }
 }
 </script>

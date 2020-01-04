@@ -7,7 +7,7 @@
           <el-col :span="3">区域:</el-col>
           <el-col
             :span="18"
-          >全部 镇兴路沿线视觉艺术学院大成名店南京西站铜山镇大桥南路宝塔路沿线宝塔路/万辰苏果珠江路沿线华侨城江浦东屏镇南京南站/明发北岭路沿线苜蓿园弘阳广场</el-col>
+          >全部 &nbsp;&nbsp;&nbsp;<a href="#" v-for="(item,index) in cityData.scenics" :key="index" @click.prevent="filterMap(item.id)" style="margin-right:15px;">{{item.name}}</a></el-col>
         </el-row>
         <!-- 攻略 -->
         <el-row>
@@ -28,7 +28,17 @@
 </template>
 
 <script>
-export default {}
+export default {
+  props:{
+    cityData:{
+      type:Object,
+      default(){return {}}
+    }
+  },
+  methods: {
+    filterMap(){}
+  }
+}
 </script>
 
 <style lang="less" scoped>

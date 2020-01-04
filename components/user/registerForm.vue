@@ -68,15 +68,10 @@ export default {
       if (!this.form.username) {
         return this.$message.error('请输入手机号码')
       }
-      this.$axios({
-        url: '/captchas',
-        method: 'POST',
-        data: {
-          tel: this.form.username
+      this.$store.dispatch('user/sendCaptchas',this.form.username).then(res=>{
+        if(res){
+         this.$message.success('验证码已经发送到手机上 验证码是' + res.data.code)
         }
-      }).then(res => {
-        console.log(res)
-        this.$message.success('验证码已经发送到手机上 验证码是' + res.data.code)
       })
     },
 
