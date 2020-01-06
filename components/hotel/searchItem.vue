@@ -15,12 +15,19 @@
         </h2>
         <span class="desc">
           <span>{{item.alias}}</span>
-          <i class="iconfont iconhuangguan"></i> {{item.hoteltype.name}}
+          <i class="iconfont iconhuangguan"></i><i class="iconfont iconhuangguan"></i><i class="iconfont iconhuangguan"></i> {{item.hoteltype.name}}
         </span>
         <el-row>
           <el-col :span="10">
-            <i class="el-rate__icon el-icon-star-on" style="color: rgb(247, 186, 42);" v-for="(star,index) in 3" :key="index"></i>
-            <span class="lh">{{item.stars}}</span> 分
+            <div class="stars">
+              <el-rate
+            v-model="item.stars"
+            disabled
+            show-score
+            text-color="#ff9900"
+            score-template="{value}"
+          ></el-rate>
+            </div>
           </el-col>
           <el-col :span="7">
             <span class="lh">{{item.num_collected}}</span> 条评论
@@ -33,7 +40,7 @@
         <span class="grar">位于: {{item.address}}</span>
       </el-col>
       <el-col :span="6">
-        <el-table :data="item.products" :show-header="false">
+        <el-table :data="item.products" :show-header="false"  @row-click="priceClick">
           <el-table-column prop="name" width="100"></el-table-column>
           <el-table-column prop="price" width="120">
             <template slot-scope="scope">
@@ -51,7 +58,8 @@
 <script>
 export default {
   data() {
-    return {}
+    return {
+    }
   },
   props:{
       hotelData:{
@@ -61,8 +69,19 @@ export default {
   },
   mounted(){
       setTimeout(()=>{
-      console.log(this.hotelData);
+      // console.log(this.hotelData);
       },1000)
+  },
+  methods: {
+    priceClick(row, column, event) {
+      if (row.name === '携程') {
+        window.open('https://hotels.ctrip.com/hotel/694679.html', '_blank')
+      } else if (row.name === '艺龙') {
+        window.open('http://www.elong.com', '_blank')
+      } else if (row.name === 'Hotels.com') {
+        window.open('https://www.hotels.cn/m', '_blank')
+      }
+    }
   }
 }
 </script>
@@ -90,7 +109,13 @@ export default {
   
 .lh {
     line-height: 40px;
-    color: #f90
+    color: #f90;
+}
+
+.stars {
+  height: 40px;
+  display: flex;
+  align-items: center;
 }
 
 .grar {

@@ -5,9 +5,22 @@
         <!-- 区域 -->
         <el-row>
           <el-col :span="3">区域:</el-col>
-          <el-col
-            :span="18"
-          >全部 &nbsp;&nbsp;&nbsp;<a href="#" v-for="(item,index) in cityData.scenics" :key="index" @click.prevent="filterMap(item.id)" style="margin-right:15px;">{{item.name}}</a></el-col>
+          <el-col :span="18">
+            <div :class="{hiddenAll:hidden}">
+              <span style="font-weight:bold">全部</span> &nbsp;&nbsp;
+              <a
+                href="#"
+                v-for="(item,index) in cityData.scenics"
+                :key="index"
+                @click.prevent="filterMap(item.id)"
+                style="margin-right:15px;"
+              >{{item.name}}</a>
+            </div>
+            <div>
+              <i data-v-d0475a26 :class="['el-icon-d-arrow-right',{'el-icon-d-arrow-top':hidden}]"></i>
+              <a href="#" @click="hiddenAll" style="font-weight:bold">等43个区域</a>
+            </div>
+          </el-col>
         </el-row>
         <!-- 攻略 -->
         <el-row>
@@ -29,14 +42,27 @@
 
 <script>
 export default {
-  props:{
-    cityData:{
-      type:Object,
-      default(){return {}}
+  data() {
+    return {
+      hidden: true
+    }
+  },
+  props: {
+    cityData: {
+      type: Object,
+      default() {
+        return {}
+      }
     }
   },
   methods: {
-    filterMap(){}
+    filterMap(id) {
+      // console.log(id);
+      this.$emit('scenic',id)
+    },
+    hiddenAll() {
+      this.hidden = !this.hidden
+    }
   }
 }
 </script>
@@ -46,5 +72,16 @@ export default {
   color: #666;
   font-size: 14px;
   padding-bottom: 15px;
+}
+.hiddenAll {
+  height: 60px;
+  overflow: hidden;
+}
+.el-icon-d-arrow-right {
+    transform: rotate(270deg);
+    color: #f90;
+}
+.el-icon-d-arrow-top {
+  transform: rotate(90deg);
 }
 </style>

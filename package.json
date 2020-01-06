@@ -17,6 +17,8 @@
     "less-loader": "^5.0.0",
     "moment": "^2.24.0",
     "nuxt": "^2.0.0",
+    "qrcode": "^1.4.4",
+    "vue-amap": "^0.5.10",
     "vuex-persistedstate": "^2.7.0"
   },
   "devDependencies": {}

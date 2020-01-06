@@ -75,8 +75,13 @@ export default {
             const arr = this.data.arr_time.split(":")
             const dep = this.data.dep_time.split(":")
             
+            if(arr[0] < dep[0]){
+                arr[0] += 24
+            }
+            
             const end = arr[0] * 60 + +arr[1]
             const start = dep[0] * 60 + +dep[1]
+            
             
             var count = end - start
             const min = count % 60

@@ -21,7 +21,7 @@
         <el-col :span="8.8" style="padding:0 20px;">
           <el-form-item>
             <el-date-picker
-              v-model="value1"
+              v-model="DateValue"
               type="daterange"
               range-separator="至"
               start-placeholder="开始日期"
@@ -32,19 +32,19 @@
         <!-- 入住人选择 -->
         <el-col :span="5" style="margin-right:20px;">
           <el-form-item>
-            <el-popover placement="bottom" width="300" trigger="click">
+            <el-popover placement="bottom" width="300" trigger="click" v-model="visible">
               <span style="padding-right:58px;">每间:</span>
-              <el-select v-model="value" placeholder="成人" size="mini" style="width:100px;">
+              <el-select v-model="adultValue" placeholder="成人" size="mini" style="width:100px;">
                 <el-option
-                  v-for="item in adultValue"
+                  v-for="item in adultList"
                   :key="item.value"
                   :label="item.label+'位成人'"
                   :value="item.value"
                 ></el-option>
               </el-select>
-              <el-select v-model="value2" placeholder="儿童" size="mini" style="width:100px;">
+              <el-select v-model="ChildValue" placeholder="儿童" size="mini" style="width:100px;">
                 <el-option
-                  v-for="item in childValue"
+                  v-for="item in childList"
                   :key="item.value"
                   :label="item.label+'位儿童'"
                   :value="item.value"
@@ -53,17 +53,17 @@
               <el-input
                 placeholder="人数未定"
                 suffix-icon="el-icon-user"
-                v-model="input1"
+                v-model="people"
                 readonly
                 slot="reference"
               ></el-input>
-              <el-button type="primary" size="mini" style="margin: 15px 0 0 245px;">确定</el-button>
+              <el-button type="primary" size="mini" style="margin: 15px 0 0 245px;" @click="getPersonNum">确定</el-button>
             </el-popover>
           </el-form-item>
         </el-col>
         <!-- 按钮 -->
         <el-col :span="2">
-          <el-button type="primary">查看价格</el-button>
+          <el-button type="primary" @click="searchPrice">查看价格</el-button>
         </el-col>
       </el-row>
     </el-form>
@@ -71,16 +71,18 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
+  props:['cityId'],
   data() {
     return {
+      visible:false,
       form: {
         destList: '南京'
       },
-      value1: '',
+      DateValue: '',
       destList: [],
-      input1: '',
-      adultValue: [
+      adultList: [
         {
           value: '1',
           label: '1'
@@ -102,7 +104,7 @@ export default {
           label: '5'
         }
       ],
-       childValue: [
+      childList: [
         {
           value: '1',
           label: '1'
@@ -124,8 +126,10 @@ export default {
           label: '5'
         }
       ],
-      value: '',
-      value2: ''
+      adultValue: 0,
+      ChildValue: 0,
+      people:"人数未定",
+      peopleNum:0
     }
   },
   methods: {
@@ -158,6 +162,23 @@ export default {
     queryDepartSearch(value, cb) {
       this.getTips(value, cb, this.destList, list => {
         this.destList = list
+      })
+    },
+    // 获取人数
+    getPersonNum(){
+      this.people = this.adultValue+ "位成人" + " / " + this.ChildValue + "位儿童"
+      this.peopleNum = +this.adultValue + +this.ChildValue
+      this.visible = false
+    },
+    // 发送请求价格筛选
+    searchPrice(){
+      let fromTime = moment(this.DateValue[0]).format("YYYY-MM-DD")
+      let toTime = moment(this.DateValue[1]).format("YYYY-MM-DD")
+      this.$emit('DateFilter',{
+        city:this.cityId,
+        // enterTime:fromTime,
+        // leftTime:toTime,      //离开时间
+        // person:this.peopleNum,     //人数
       })
     }
   }

@@ -171,8 +171,16 @@ export default {
         },
         data
       }).then(res => {
-        if (res.data.data.message === '"订单提交成功"') {
-          this.$message.success('"订单提交成功"')
+          console.log(res);
+        if (res.data.message === '订单提交成功') {
+          this.$message.success('订单提交成功')
+           const {data: {id}} = res.data;
+          this.$router.push({
+            path:'/air/pay',
+            query: {
+               id
+            }
+          })
         }
       })
     }

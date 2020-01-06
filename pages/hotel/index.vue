@@ -6,8 +6,8 @@
       <el-breadcrumb-item>{{city.name}}酒店预订</el-breadcrumb-item>
     </el-breadcrumb>
   <!-- 条件筛选及地图显示区域 -->
-  <SearchBar />
-  <SearchMap :cityData="city" />
+  <SearchBar :cityId="cityId" @DateFilter="DateFilter" />
+  <SearchMap :cityData="city" @scenic="scenicFilter" />
   <!-- 筛选按钮 -->
   <SearchFilter />
   <!-- 酒店列表 -->
@@ -27,6 +27,7 @@ export default {
   data() {
     return {
       city: {},
+      cityId:0,
       hotel:[],
     // 请求酒店信息条件数据
       hotelsCondition:{
@@ -57,16 +58,29 @@ export default {
       }
     })
     this.city = res.data[0]
-      console.log(res);
-
-    // 请求酒店列表信息
-    const { data:res1 } = await this.$axios({
-          url:'/hotels',
-          params:this.hotelsCondition
-      })
-      console.log(res1);
-      this.hotel = res1.data
+    this.cityId = this.city.id
+    this.getHotelList(this.hotelsCondition)
     
+  },
+  methods: {
+    async getHotelList(data){
+      // 请求酒店列表信息
+      const { data:res } = await this.$axios({
+            url:'/hotels',
+            params:data
+        })
+        this.hotel = res.data
+        console.log(res.data);
+    },
+    // 通过景点筛选
+    scenicFilter(id){
+      this.hotelsCondition.scenic = id
+      this.getHotelList(this.hotelsCondition)
+    },
+    // 通过时间查找
+    DateFilter(obj){
+      this.getHotelList(obj)
+    }
   }
 }
 </script>

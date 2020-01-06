@@ -2,11 +2,11 @@
   <div>
     <el-row>
       <el-col :span="8">
+        <!-- 滑块区域 -->
         <span style="margin-right:199px;">价格</span>
         <span>0-4000</span>
-        <!-- 滑块区域 -->
         <div class="block">
-          <el-slider v-model="value2"></el-slider>
+          <el-slider v-model="priceBlock" :max="4000"></el-slider>
         </div>
       </el-col>
       <el-col :span="4">
@@ -99,7 +99,7 @@
 export default {
   data() {
     return {
-      value2: 100,
+      priceBlock: 4000,
       option:{}
     }
   },
@@ -107,7 +107,7 @@ export default {
     const res = await this.$axios({
       url:'/hotels/options',
     })
-    console.log(res);
+    // console.log(res);
     this.option = res.data.data
   }
 }

@@ -13,5 +13,9 @@ export default function({$axios, redirect}){
         if(statusCode === 400){
             Message.warning({message});
         }
+        if(statusCode === 401){
+            Message.warning('登录会话已过期，请重新登录');
+            redirect("/user/login");
+        }
     })
 }
