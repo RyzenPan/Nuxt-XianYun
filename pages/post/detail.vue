@@ -8,18 +8,16 @@
           <el-breadcrumb-item>攻略详情</el-breadcrumb-item>
         </el-breadcrumb>
 
-        <h1>塞班贵？一定是你的打开方式不对！6000块玩转塞班</h1>
+        <h1>{{postData.title}}</h1>
         <div class="postInfo">
-          <span>攻略：2019-05-22 10:57</span>&nbsp;&nbsp;&nbsp;
-          <span>阅读：12802</span>
+          <span>攻略：{{postData.city.created_at}}</span>&nbsp;&nbsp;&nbsp;
+          <span>阅读：{{postData.watch}}</span>
         </div>
-        <div class="content">
-          <p>大家对塞班岛总存在着这样的误解，知道它是美属地盘，就理所当然地觉得这里的花费一定很高，花费高有高的玩法，那如果只有6000块的预算呢？要怎么玩？关于旅行这件事，我们要让钱花得更有道理，收下这份攻略，带你6000块花式玩转塞班。</p>
-        </div>
+        <div class="content" v-html="postData.content"></div>
         <div class="post-ctrl">
           <div class="ctrl-item">
             <i data-v-741ea8d8 class="iconfont iconpinglun"></i>
-            <p>评论(100)</p>
+            <p>评论({{postData.comments.length}})</p>
           </div>
           <div class="ctrl-item">
             <i data-v-741ea8d8 class="iconfont iconstar1"></i>
@@ -31,43 +29,40 @@
           </div>
           <div class="ctrl-item">
             <i data-v-741ea8d8 class="iconfont iconding"></i>
-            <p>点赞(100)</p>
+            <p>点赞({{postData.like || 0}})</p>
           </div>
         </div>
         <!-- 评论区 -->
         <div class="cmt-wrapper">
           <h4>评论</h4>
-          <el-input type="textarea"></el-input>
+          <el-tag closable type="info" @close="closeAt" v-if="replyName">{{replyName}}</el-tag>
+          <el-input type="textarea" v-model="cmtContent"></el-input>
           <div class="upload">
             <!-- 上传图片 -->
             <el-upload
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="http://127.0.0.1:1337/upload"
+              name="files"
               list-type="picture-card"
-              :on-preview="handlePictureCardPreview"
+              :on-success="picUploadSuccess"
               :on-remove="handleRemove"
             >
               <i class="el-icon-plus"></i>
             </el-upload>
-            <el-button size="mini" type="primary">提交</el-button>
+            <el-button size="mini" type="primary" @click="submitCmt">提交</el-button>
           </div>
         </div>
         <!-- 评论列表 -->
-        <div class="cmt-list">
-          <div class="cmt-list-item">
-            <div class="cmt-info">
-              <div class="left">
-                <img src="http://157.122.54.189:9095/assets/images/avatar.jpg" alt />
-                <span>地球发动机</span>
-                <i>2020-01-06 8:49</i>
-              </div>
-              <span>1</span>
-            </div>
-            <div class="cmt-content">
-              <p>测试一下</p>
-              <div class="cmt-ctrl"><a href="#">回复</a></div>
-            </div>
-          </div>
-        </div>
+        <detailCmt @replayDate="replayDate" :commitData="commitData"></detailCmt>
+        <!-- 分页 -->
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="currentPage2"
+          :page-sizes="[5, 8, 10, 15]"
+          :page-size='pageSize'
+          layout="total,sizes, prev, pager, next"
+          :total='total'
+        ></el-pagination>
       </el-col>
       <!-- 侧边栏 -->
       <el-col :span="6">侧边栏</el-col>
@@ -76,16 +71,110 @@
 </template>
 
 <script>
+import detailCmt from '@/components/post/detailCmt'
 export default {
+  components: {
+    detailCmt
+  },
   data() {
-    return {}
+    return {
+      postData: {
+        city: {},
+        comments: []
+      },
+      cmtContent: '',
+      replyName: '',
+      replyId: '',
+      picInfo: {},
+      commitData: [],
+      // 评论分页
+      pageSize:5,
+      pageIndex:0,
+      total:0,
+      currentPage2:0
+    }
+  },
+  mounted() {
+    this.$axios({
+      url: '/posts',
+      params: {
+        id: this.$route.query.id
+      }
+    }).then(res => {
+      this.postData = res.data.data[0]
+    })
+    this.getCmtInfo()
   },
   methods: {
-    handlePictureCardPreview(file) {
-      console.log(file)
+    // 获取评论数据
+    getCmtInfo() {
+      this.$axios({
+        url: 'posts/comments',
+        params: {
+          post: this.$route.query.id,
+          _start: this.pageIndex,
+          _limit: this.pageSize
+        }
+      }).then(res => {
+        this.commitData = res.data.data
+        this.total = res.data.total
+        console.log(res);
+      })
+    },
+    // 分页功能
+    handleCurrentChange(val){
+      this.pageIndex = val
+      this.getCmtInfo()
+    },
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.getCmtInfo()
+    },
+    picUploadSuccess(res) {
+      this.$message.success('上传成功')
+      this.picInfo = res[0]
+      this.cmtContent =
+        this.cmtContent +
+        `<br /><img src="http://127.0.0.1:1337${res[0].url}" alt="">`
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList)
+      this.$message.success('移除成功')
+      this.picInfo.length = 0
+    },
+    // 发布评论
+    submitCmt() {
+      this.$axios({
+        url: '/comments',
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + this.$store.state.user.userInfo.token,
+          'Content-Type': 'application/json'
+        },
+        data: {
+          content: this.cmtContent,
+          pics: this.picInfo,
+          post: this.postData.id,
+          follow: this.replyId
+        }
+      }).then(res => {
+        console.log(res)
+        if (res.message === '提交成功') this.$message.success('评论成功')
+      })
+      this.cmtContent = ''
+      this.$message.success('发布成功')
+      this.getCmtInfo()
+      this.closeAt()
+    },
+    // 获取回复人信息
+    replayDate(data) {
+      console.log(data)
+      this.replyName = data.account.nickname
+      this.replyId = data.id
+    },
+    // 取消@评论
+    closeAt() {
+      this.replyName = ''
+      this.replyId = ''
     }
   }
 }
@@ -160,7 +249,7 @@ export default {
         align-items: center;
         justify-content: space-between;
         color: #666;
-        .left{
+        .left {
           display: flex;
           align-items: center;
           span {
@@ -173,16 +262,16 @@ export default {
         }
       }
     }
-    .cmt-content{
+    .cmt-content {
       margin-top: 10px;
       padding-left: 30px;
       height: 42px;
       line-height: 42px;
       p {
         height: 20px;
-      line-height: 20px;
+        line-height: 20px;
       }
-      .cmt-ctrl{
+      .cmt-ctrl {
         float: right;
         height: 20px;
         line-height: 20px;
@@ -193,5 +282,17 @@ export default {
 }
 .el-breadcrumb {
   margin: 15px 0;
+}
+
+.content {
+  width: 700px;
+  /deep/img {
+    max-width: 100% !important;
+    padding: 10px 0;
+  }
+}
+
+.el-tag {
+  margin-bottom: 5px;
 }
 </style>

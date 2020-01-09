@@ -285,6 +285,8 @@ export default {
           img {
             width: 220px;
             height: 150px;
+            object-fit: cover;
+            -o-object-fit: cover;
           }
         }
       }

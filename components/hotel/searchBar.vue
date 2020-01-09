@@ -126,8 +126,8 @@ export default {
           label: '5'
         }
       ],
-      adultValue: 0,
-      ChildValue: 0,
+      adultValue: 0+' 位成人',
+      ChildValue: 0+' 位小孩',
       people:"人数未定",
       peopleNum:0
     }
