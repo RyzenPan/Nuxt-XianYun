@@ -56,14 +56,14 @@
       <!-- 推荐列表 -->
       <div class="postList">
         <div class="postItem" v-for="(item,index) in postList" :key="index">
-          <a href="http://157.122.54.189:9093/post/detail?id=4">
+          <a href="#" @click.prevent="$router.push({path:`/post/detail?id=${item.id}`})">
             <h3>{{item.title}}</h3>
           </a>
-          <a href="http://157.122.54.189:9093/post/detail?id=4">
-            <p v-text="item.summary"></p>
+          <a href="#" @click.prevent="$router.push({path:`/post/detail?id=${item.id}`})">
+          <p v-text="item.summary"></p>
           </a>
-          <a class="postPIC" href="http://157.122.54.189:9093/post/detail?id=4">
-            <img :src="item.images[0]" alt />
+          <a class="postPIC" href="#" @click.prevent="$router.push({path:`/post/detail?id=${item.id}`})">
+          <img :src="item.images[0]" alt />
             <img :src="item.images[1]" alt />
             <img :src="item.images[2]" alt />
           </a>

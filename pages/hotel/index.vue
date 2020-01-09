@@ -7,7 +7,7 @@
     </el-breadcrumb>
   <!-- 条件筛选及地图显示区域 -->
   <SearchBar :cityId="cityId" @DateFilter="DateFilter" />
-  <SearchMap :cityData="city" @scenic="scenicFilter" />
+  <SearchMap :cityData="city" :cityId="cityId" :hotelData="hotel" @scenic="scenicFilter" />
   <!-- 筛选按钮 -->
   <SearchFilter />
   <!-- 酒店列表 -->
@@ -73,9 +73,8 @@ export default {
         console.log(res.data);
     },
     // 通过景点筛选
-    scenicFilter(id){
-      this.hotelsCondition.scenic = id
-      this.getHotelList(this.hotelsCondition)
+    scenicFilter(obj){
+      this.getHotelList(obj)
     },
     // 通过时间查找
     DateFilter(obj){

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="containerApp">
     <!-- 面包屑 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>酒店</el-breadcrumb-item>
@@ -57,48 +57,28 @@
     <!-- 地图及附近配套信息 -->
     <el-row>
       <el-col :span="16">
-        <h1>地图区域</h1>
+        <script
+          type="text/javascript"
+          src="https://webapi.amap.com/maps?v=1.4.15&key=28c6d1daa97bd27131f7ade6221208cc"
+        ></script>
+        <div id="container"></div>
       </el-col>
       <el-col :span="8">
         <!-- 配套列表 -->
         <el-tabs v-model="activeName" @tab-click="handleClick" class="mapList">
-          <el-tab-pane label="风景" name="first">
+          <el-tab-pane label="便利店" name="first">
             <ol>
-              <li>
-                <span>高淳老街</span>
-                <span>0.09公里</span>
-              </li>
-              <li>
-                <span>高淳老街</span>
-                <span>0.09公里</span>
-              </li>
-              <li>
-                <span>高淳老街</span>
-                <span>0.09公里</span>
-              </li>
-              <li>
-                <span>高淳老街</span>
-                <span>0.09公里</span>
-              </li>
-              <li>
-                <span>高淳老街</span>
-                <span>0.09公里</span>
-              </li>
-              <li>
-                <span>高淳老街</span>
-                <span>0.09公里</span>
-              </li>
-              <li>
-                <span>高淳老街</span>
-                <span>0.09公里</span>
+              <li v-for="(item,index) in storeList" :key="index">
+                <span>{{item.name}}</span>
+                <span>{{item.distance}}米</span>
               </li>
             </ol>
           </el-tab-pane>
-          <el-tab-pane label="交通" name="second">
+          <el-tab-pane label="公交站" name="second">
             <ol>
-              <li>
-                <span>甘霖路口(公交站)</span>
-                <span>0.09公里</span>
+              <li v-for="(item,index) in storeList" :key="index">
+                <span>{{item.name}}</span>
+                <span>{{item.distance}}米</span>
               </li>
             </ol>
           </el-tab-pane>
@@ -162,6 +142,7 @@ export default {
   data() {
     return {
       starsValue: 0,
+      storeList:[],
       hotelDetailDate: {},
       activeName: 'first',
       tableData: [
@@ -193,9 +174,47 @@ export default {
     this.hotelDetailDate = res1.data[0]
     console.log(this.hotelDetailDate)
     this.starsValue = this.hotelDetailDate.stars
+
+    // 地图信息
+    // var map = new AMap.Map('container', {
+    //   zoom: 8, //级别
+    //   center: [
+    //     this.hotelDetailDate.location.longitude,
+    //     this.hotelDetailDate.location.latitude
+    //   ], //中心点坐标
+    //   viewMode: '3D' //使用3D视图
+    // })
+    this.search('便利店')
+    
   },
   methods: {
-    handleClick() {},
+    search(name) {
+      let that = this
+      var map = new AMap.Map('container', {
+        resizeEnable: true
+      })
+      AMap.service(['AMap.PlaceSearch'], function() {
+        //构造地点查询类
+        var placeSearch = new AMap.PlaceSearch({
+          city: 'nanjing', // 兴趣点城市
+          map: map, // 展现结果的地图实例
+          autoFitView: true // 是否自动调整地图视野使绘制的 Marker点都处于视口的可见范围
+        })
+
+        var cpoint = [118.9213, 31.75649] //中心点坐标
+        placeSearch.searchNearBy(name, cpoint, 5000, function(
+          status,
+          result
+        ) {
+          console.log(result.poiList.pois);
+          that.storeList = result.poiList.pois
+          // console.log(this);
+        })
+      })
+    },
+    handleClick(v) {
+      this.search(v.label)
+    },
     priceClick(row, column, event) {
       console.log(row)
       if (row.name === '携程') {
@@ -211,7 +230,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.container {
+#container {
+  width: 650px;
+  height: 360px;
+}
+.containerApp {
   width: 1000px;
   margin: 0 auto;
   .el-breadcrumb {
