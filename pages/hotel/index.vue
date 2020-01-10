@@ -12,6 +12,16 @@
   <SearchFilter />
   <!-- 酒店列表 -->
   <SearchItem :hotelData="hotel" />
+  <!-- 分页功能 -->
+   <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="postPage"
+      :page-sizes="[5, 10, 20, 30]"
+      :page-size='pageSize'
+      layout="total, sizes, prev, pager, next, jumper"
+      :total='total' >
+    </el-pagination>
   </div>
 </template>
 
@@ -46,7 +56,12 @@ export default {
         // _sort:'',     //排序
         // _limit:0,       //条数
         // _start:0    //开始数据（分页
-      }
+      },
+      // 分页功能
+      pageIndex:1,
+      pageSize:5,
+      total:121,
+      postPage:0
     }
   },
   async mounted(){
@@ -58,19 +73,23 @@ export default {
       }
     })
     this.city = res.data[0]
+    console.log(res);
     this.cityId = this.city.id
     this.getHotelList(this.hotelsCondition)
-    
+    // this.total = res.data.total
   },
   methods: {
     async getHotelList(data){
       // 请求酒店列表信息
       const { data:res } = await this.$axios({
             url:'/hotels',
-            params:data
+            params:{
+              ...data,
+              _start: this.pageSize*(this.pageIndex-1),
+              _limit: this.pageSize
+            }
         })
         this.hotel = res.data
-        console.log(res.data);
     },
     // 通过景点筛选
     scenicFilter(obj){
@@ -79,6 +98,17 @@ export default {
     // 通过时间查找
     DateFilter(obj){
       this.getHotelList(obj)
+    },
+   // 分页
+    handleSizeChange(val){
+      this.pageIndex = 0
+      this.pageSize = val
+      this.getHotelList()
+    },
+    handleCurrentChange(val){
+      this.pageIndex = 0
+      this.pageIndex = val
+      this.getHotelList()
     }
   }
 }
@@ -90,6 +120,9 @@ export default {
   margin: 0 auto;
   .el-breadcrumb{
     margin: 15px 0;
+  }
+  .el-pagination{
+    margin: 20px 0;
   }
 }
 </style>

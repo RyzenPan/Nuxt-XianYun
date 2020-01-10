@@ -99,6 +99,9 @@ export default {
     // console.log(res)
     this.memuList = res.data.data
     this.getPostInfo()
+    if(this.$route.query.city){
+      this.quickSearch(this.$route.query.city)
+    }
   },
   methods: {
     async getPostInfo(keyword) {
@@ -185,7 +188,7 @@ export default {
         i {
           line-height: 41px;
           font-size: 18px;
-          color: #999;
+          // color: #999;
         }
       }
     }

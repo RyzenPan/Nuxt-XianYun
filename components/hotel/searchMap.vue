@@ -81,7 +81,7 @@ export default {
       // console.log(id);
       this.$emit('scenic', {
         city: this.cityId,
-        scenic: id
+        // scenic: id
       })
 
       // 搜索
