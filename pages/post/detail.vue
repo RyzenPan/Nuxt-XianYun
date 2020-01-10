@@ -65,16 +65,17 @@
         ></el-pagination>
       </el-col>
       <!-- 侧边栏 -->
-      <el-col :span="6">侧边栏</el-col>
+      <el-col :span="7"><detailAside></detailAside></el-col>
     </el-row>
   </div>
 </template>
 
 <script>
 import detailCmt from '@/components/post/detailCmt'
+import detailAside from '@/components/post/detailAside'
 export default {
   components: {
-    detailCmt
+    detailCmt,detailAside
   },
   data() {
     return {

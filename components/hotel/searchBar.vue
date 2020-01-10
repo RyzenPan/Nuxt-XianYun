@@ -154,7 +154,11 @@ export default {
       }
     },
     // 出发城市下拉选择时触发
-    handleDepartSelect(item) {},
+    handleDepartSelect(item) {
+      this.form.destList=item.name
+      console.log(this.form.destList);
+      
+    },
     // 出发城市输入失去焦点
     departCityInput() {},
     // 出发城市输入框获得焦点时触发

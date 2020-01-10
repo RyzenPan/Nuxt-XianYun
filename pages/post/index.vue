@@ -21,9 +21,8 @@
           <div v-for="(item2,index2) in optionData" :key="index2">
             <em>{{index2+1}}</em>
             <strong>{{item2.city}}</strong>
-            <span>{{item2.desc}}</span>
+            <span @click="quickSearch(item2.city)">{{item2.desc}}</span>
           </div>
-          
         </div>
       </div>
       <!-- 推荐城市 -->
@@ -38,15 +37,18 @@
     <div class="main">
       <!-- 搜索 -->
       <div class="search">
-        <input type="text" placeholder="请输入想去的地方" />
-        <i class="el-icon-search searchIcon"></i>
+        <input type="text" placeholder="请输入想去的地方" v-model="searchKeyword" />
+        <i class="el-icon-search searchIcon" @click="searchCity"></i>
       </div>
       <!-- 推荐 -->
       <div class="recommend">
         推荐：
-        <a href>广州</a>
-        <a href>上海</a>
-        <a href>北京</a>
+        <a
+          href="#"
+          v-for="(item,index) in ['广州','上海','北京']"
+          :key="index"
+          @click.prevent="quickSearch(item)"
+        >{{item}}</a>
       </div>
       <!-- 推荐攻略 -->
       <div class="postTitle">
@@ -54,51 +56,39 @@
         <el-button type="primary" icon="el-icon-edit">写游记</el-button>
       </div>
       <!-- 推荐列表 -->
-      <div class="postList">
-        <div class="postItem" v-for="(item,index) in postList" :key="index">
-          <a href="#" @click.prevent="$router.push({path:`/post/detail?id=${item.id}`})">
-            <h3>{{item.title}}</h3>
-          </a>
-          <a href="#" @click.prevent="$router.push({path:`/post/detail?id=${item.id}`})">
-          <p v-text="item.summary"></p>
-          </a>
-          <a class="postPIC" href="#" @click.prevent="$router.push({path:`/post/detail?id=${item.id}`})">
-          <img :src="item.images[0]" alt />
-            <img :src="item.images[1]" alt />
-            <img :src="item.images[2]" alt />
-          </a>
-          <div class="footer">
-            <div class="footerLeft">
-              <span class="location">
-                <i class="el-icon-location-outline"></i>
-                {{item.city.name}}
-              </span>
-              <span class="userName">
-                <i class="el-icon-user"></i>
-                {{item.account.nickname}}
-              </span>
-              <span class="watch">
-                <i class="el-icon-view"></i>
-                {{item.watch}}
-              </span>
-            </div>
-            <div class="footerright">{{ item.like === null ? 0 : item.like}} 赞</div>
-          </div>
-        </div>
-      </div>
+      <postList :postList="postList"></postList>
+      <!-- 分页 -->
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="postPage"
+        :page-sizes="[3, 5, 10, 15]"
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+      ></el-pagination>
     </div>
   </div>
 </template>
 
 <script>
+import postList from '@/components/post/postList'
 export default {
+  components: {
+    postList
+  },
   data() {
     return {
+      searchKeyword: '',
       flag: '',
       memuList: [],
       postList: [],
       optionData: [],
-      optionShow: false
+      optionShow: false,
+      pageIndex:0,
+      pageSize:3,
+      total:0,
+      postPage:0
     }
   },
   async mounted() {
@@ -106,20 +96,25 @@ export default {
     const res = await this.$axios({
       url: '/posts/cities'
     })
-    console.log(res)
+    // console.log(res)
     this.memuList = res.data.data
-    // 获取攻略信息
-    const res1 = await this.$axios({
-      url: '/posts',
-      data: {
-        _start: 0,
-        _limit: 10
-      }
-    })
-    // console.log(res1);
-    this.postList = res1.data.data
+    this.getPostInfo()
   },
   methods: {
+    async getPostInfo(keyword) {
+      // 获取攻略信息
+      const res1 = await this.$axios({
+        url: '/posts',
+        params: {
+          city: keyword || null,
+          _start: this.pageSize*(this.pageIndex-1),
+          _limit: this.pageSize
+        }
+      })
+      // console.log(res1);
+      this.postList = res1.data.data
+      this.total = res1.data.total
+    },
     memuEnter(index) {
       this.optionData = this.memuList[index].children
       this.flag = index
@@ -128,7 +123,28 @@ export default {
     memuLeave() {
       this.optionShow = false
       this.flag = ''
-    }
+    },
+    // 搜索城市
+    searchCity() {
+      let keyword = this.searchKeyword
+      this.getPostInfo(keyword)
+    },
+    // 快速搜索
+    quickSearch(keyword) {
+      this.getPostInfo(keyword)
+    },
+    // 分页
+    handleSizeChange(val){
+      this.pageIndex = 0
+      this.pageSize = val
+      this.getPostInfo()
+    },
+    handleCurrentChange(val){
+      this.pageIndex = 0
+      this.pageIndex = val
+      this.getPostInfo()
+    },
+    
   }
 }
 </script>
@@ -258,50 +274,6 @@ export default {
         }
       }
     }
-    .postList {
-      padding: 10px 0;
-      width: 700px;
-      .postItem {
-        padding: 10px 0;
-        h3 {
-          font-size: 18px;
-          font-weight: normal;
-          padding-bottom: 10px;
-          &:hover {
-            color: orange;
-          }
-        }
-        p {
-          font-size: 14px;
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 3; // 限制快级元素的文本行数
-          overflow: hidden;
-        }
-        .postPIC {
-          display: flex;
-          margin: 10px 0;
-          justify-content: space-between;
-          img {
-            width: 220px;
-            height: 150px;
-            object-fit: cover;
-            -o-object-fit: cover;
-          }
-        }
-      }
-    }
-    .footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-      color: #999;
-      .userName {
-        padding: 0 15px;
-        color: orange;
-      }
-    }
   }
 }
 
@@ -332,6 +304,10 @@ export default {
     }
     span {
       color: #999;
+      cursor: pointer;
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 }
