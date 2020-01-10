@@ -53,7 +53,7 @@
       <!-- 推荐攻略 -->
       <div class="postTitle">
         <span>推荐攻略</span>
-        <el-button type="primary" icon="el-icon-edit">写游记</el-button>
+        <el-button type="primary" icon="el-icon-edit" @click="writeTravl">写游记</el-button>
       </div>
       <!-- 推荐列表 -->
       <postList :postList="postList"></postList>
@@ -144,7 +144,9 @@ export default {
       this.pageIndex = val
       this.getPostInfo()
     },
-    
+    writeTravl(){
+      this.$router.push({path:"/post/create"})
+    }
   }
 }
 </script>
