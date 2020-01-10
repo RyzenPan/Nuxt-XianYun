@@ -37,10 +37,10 @@
         </el-row>
       </el-col>
       <el-col :span="10">
-        <script
+        <!-- <script
           type="text/javascript"
           src="https://webapi.amap.com/maps?v=1.4.15&key=28c6d1daa97bd27131f7ade6221208cc"
-        ></script>
+        ></script>-->
         <div id="container"></div>
       </el-col>
     </el-row>
@@ -52,7 +52,7 @@ export default {
   data() {
     return {
       hidden: true,
-      act:''
+      act: ''
     }
   },
   props: {
@@ -76,7 +76,7 @@ export default {
     }
   },
   methods: {
-    filterMap(id, name,index) {
+    filterMap(id, name, index) {
       this.act = index
       // console.log(id);
       this.$emit('scenic', {
@@ -104,7 +104,7 @@ export default {
     hiddenAll() {
       this.hidden = !this.hidden
     },
-    clearAllSelect(){
+    clearAllSelect() {
       this.act = ''
       this.$emit('scenic', {
         city: this.cityId
@@ -112,15 +112,14 @@ export default {
     }
   },
   mounted() {
-    // 地图信息
-    setTimeout(() => {
-          var map = new AMap.Map('container', {
-      zoom: 8, //级别
-      center: [118.9213, 31.75649], //中心点坐标
-      viewMode: '3D' //使用3D视图
-    })
-
-    // 创建一个 Marker 实例：
+    window.onLoad = function() {
+      var map = new AMap.Map('container', {
+        zoom: 8, //级别
+        center: [118.9213, 31.75649], //中心点坐标
+        viewMode: '3D' //使用3D视图
+      })
+      
+      // // 创建一个 Marker 实例：
     var marker1 = new AMap.Marker({
       position: new AMap.LngLat(118.8718107, 31.32846821), // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
       title: '好来阁商务宾馆'
@@ -140,8 +139,14 @@ export default {
 
     // 将创建的点标记添加到已有的地图实例：
     map.add([marker1, marker2, marker3, marker4])
-    
-    }, 400);
+      
+    }
+    var url =
+      'https://webapi.amap.com/maps?v=1.4.15&key=28c6d1daa97bd27131f7ade6221208cc&callback=onLoad'
+    var jsapi = document.createElement('script')
+    jsapi.charset = 'utf-8'
+    jsapi.src = url
+    document.head.appendChild(jsapi)
   }
 }
 </script>

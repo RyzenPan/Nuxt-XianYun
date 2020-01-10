@@ -8,7 +8,9 @@
           <!-- 标题 -->
           <el-input placeholder="请输入标题" v-model="form.title"></el-input>
           <!-- 富文本区域 -->
-          <VueEditor :config="config" ref="vueEditor"></VueEditor>
+          <el-form-item label-width="0">
+          <VueEditor :config="config" ref="vueEditor"/>
+          </el-form-item>
           <!-- 选择城市 -->
           <el-form-item label="选择城市">
             <el-autocomplete
@@ -46,11 +48,16 @@
 </template>
 
 <script>
-import VueEditor from 'vue-word-editor'
-import 'quill/dist/quill.snow.css'
 import moment from 'moment'
+import "quill/dist/quill.snow.css"
+let VueEditor;
+
+if (process.browser) {
+    VueEditor = require('vue-word-editor').default
+}
+
 export default {
-  components: {
+  components:{
     VueEditor
   },
   data() {
@@ -153,13 +160,18 @@ export default {
     },
     // 读取草稿
     readDraft(index) {
-      this.form = this.draftsData[index]
+      this.form.length = 0
       var quill = this.$refs.vueEditor.editor
+      quill.root.innerHTML = ''
+      this.form = this.draftsData[index]
       quill.clipboard.dangerouslyPasteHTML(0, this.draftsData[index].content)
     }
   },
   mounted() {
-    this.draftsData = this.$store.state.post.post
+    setTimeout(() => {
+      this.draftsData = this.$store.state.post.post
+    }, 0);
+    
   }
 }
 </script>
@@ -211,6 +223,7 @@ export default {
     flex-direction: column;
     color: #666;
     justify-content: space-between;
+    cursor: pointer;
     p {
       margin: 0;
     }
