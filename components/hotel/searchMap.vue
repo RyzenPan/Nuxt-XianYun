@@ -113,7 +113,8 @@ export default {
   },
   mounted() {
     // 地图信息
-    var map = new AMap.Map('container', {
+    setTimeout(() => {
+          var map = new AMap.Map('container', {
       zoom: 8, //级别
       center: [118.9213, 31.75649], //中心点坐标
       viewMode: '3D' //使用3D视图
@@ -139,6 +140,8 @@ export default {
 
     // 将创建的点标记添加到已有的地图实例：
     map.add([marker1, marker2, marker3, marker4])
+    
+    }, 400);
   }
 }
 </script>

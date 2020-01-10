@@ -29,7 +29,17 @@
         </el-form>
       </el-col>
       <el-col class="aside" :span="7">
-        <div class="drafts">草稿箱（0）</div>
+        <div class="drafts">草稿箱（{{draftsData.length}}）</div>
+        <div
+          class="draftsItem"
+          v-for="(item,index) in draftsData"
+          :key="index"
+          @click="readDraft(index)"
+        >
+          <span data-v-a7cc81fa class="iconfont el-icon-edit">{{item.title}}</span>
+
+          <p>{{item.time}}</p>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -50,6 +60,7 @@ export default {
         title: '',
         city: ''
       },
+      draftsData: [],
       destList: [],
       //   富文本配置
       config: {
@@ -111,21 +122,44 @@ export default {
       })
     },
     // 获取文章内容
-    getContent(){
+    getContent() {
       let quill = this.$refs.vueEditor.editor
       this.form.content = quill.root.innerHTML
     },
     // 发布文章
     sendPost() {
       this.getContent()
+      delete this.form.time
+      this.$axios({
+        url:'/posts',
+        method:"POST",
+        headers: {
+          Authorization: 'Bearer ' + this.$store.state.user.userInfo.token
+        },
+        data:this.form
+      }).then(res=>{
+        if(res.data.message === '新增成功') {
+          this.$message.success('文章新增成功')
+          this.$router.push({path:'/post'})
+        }
+      })
     },
     // 存为草稿
-    saveDrafts(){
+    saveDrafts() {
       this.getContent()
-      let now = moment(new Date).format("YYYY-MM-DD HH:mm:ss")
+      let now = moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
       this.form.time = now
       this.$store.commit('post/savePostDrafts', this.form)
+    },
+    // 读取草稿
+    readDraft(index) {
+      this.form = this.draftsData[index]
+      var quill = this.$refs.vueEditor.editor
+      quill.clipboard.dangerouslyPasteHTML(0, this.draftsData[index].content)
     }
+  },
+  mounted() {
+    this.draftsData = this.$store.state.post.post
   }
 }
 </script>
@@ -167,6 +201,19 @@ export default {
     border: 1px solid #ddd;
     padding: 10px;
     text-align: center;
+  }
+  .draftsItem {
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    height: 40px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    color: #666;
+    justify-content: space-between;
+    p {
+      margin: 0;
+    }
   }
 }
 </style>
