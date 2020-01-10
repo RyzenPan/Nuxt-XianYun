@@ -28,7 +28,9 @@
           </span>
         </el-form>
       </el-col>
-      <el-col class="aside" :span="7">侧边</el-col>
+      <el-col class="aside" :span="7">
+          <div class="drafts">草稿箱（0）</div>
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -137,5 +139,13 @@ export default {
 #vue-editor-wrapper{
     height: 410px;
     margin: 20px 0 60px 0;
+}
+
+.aside{
+    .drafts{
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+    }
 }
 </style>
